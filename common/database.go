@@ -7,13 +7,14 @@ import (
 )
 
 var DB *gorm.DB
+
 // 开启链接池
 func InitDB() *gorm.DB {
 
 	driverName := "mysql"
 	host := "127.0.0.1"
 	port := "3306"
-	database := "gin"
+	database := "goweb"
 	username := "root"
 	password := ""
 	charset := "utf8"
@@ -32,10 +33,10 @@ func InitDB() *gorm.DB {
 	}
 	// 自动创建表
 	db.AutoMigrate(&model.User{})
-	DB= db
+	DB = db
 	return db
 }
 
-func GetDB() *gorm.DB{
+func GetDB() *gorm.DB {
 	return DB
 }
