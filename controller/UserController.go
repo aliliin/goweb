@@ -57,6 +57,16 @@ func Login(ctx *gin.Context) {
 // 注册
 func Register(ctx *gin.Context) {
 	DB := common.GetDB()
+	/**
+	使用 map 获取请求的参数
+	var requestMap = make(map[string]string)
+	json.NewDecoder(ctx.Request.Body).Decode(&requestMap)
+	使用 结构体
+	var requestUser = model.User{}
+	ctx.Bind(&requestUser)
+	name := requestUser.Name
+	*/
+
 	// 获取参数
 	name := ctx.PostForm("name")
 	telephone := ctx.PostForm("telephone")
@@ -93,8 +103,16 @@ func Register(ctx *gin.Context) {
 		Password:  string(hasePassowrd),
 	}
 	DB.Create(&newUser)
+
+	// 发放 token 给前端
+	token, err := common.ReleaseToken(newUser)
+	if err != nil {
+		response.Response(ctx, http.StatusInternalServerError, 500, nil, "系统异常")
+		log.Printf("token generate error: %v", err)
+		return
+	}
 	// 返回结果
-	response.Success(ctx, nil, "注册成功")
+	response.Success(ctx, gin.H{"token": token}, "注册成功")
 }
 func Info(ctx *gin.Context) {
 	user, _ := ctx.Get("user")
